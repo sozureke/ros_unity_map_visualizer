@@ -95,5 +95,8 @@ public class MapModeController : MonoBehaviour
                 tweenSeconds
             );
         }
+
+        if (ThreeDMap.Instance != null)
+            ThreeDMap.Instance.SetVisible(CurrentMode == MapViewMode.View3D);
     }
 }
