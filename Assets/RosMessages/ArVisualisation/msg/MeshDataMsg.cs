@@ -13,19 +13,22 @@ namespace RosMessageTypes.ArVisualisation
         public const string k_RosMessageName = "ar_visualisation_msgs/MeshData";
         public override string RosMessageName => k_RosMessageName;
 
+        public Std.HeaderMsg header;
         public int id;
         public Geometry.Vector3Msg[] vertices;
         public int[] triangles;
 
         public MeshDataMsg()
         {
+            this.header = new Std.HeaderMsg();
             this.id = 0;
             this.vertices = new Geometry.Vector3Msg[0];
             this.triangles = new int[0];
         }
 
-        public MeshDataMsg(int id, Geometry.Vector3Msg[] vertices, int[] triangles)
+        public MeshDataMsg(Std.HeaderMsg header, int id, Geometry.Vector3Msg[] vertices, int[] triangles)
         {
+            this.header = header;
             this.id = id;
             this.vertices = vertices;
             this.triangles = triangles;
@@ -35,6 +38,7 @@ namespace RosMessageTypes.ArVisualisation
 
         private MeshDataMsg(MessageDeserializer deserializer)
         {
+            this.header = Std.HeaderMsg.Deserialize(deserializer);
             deserializer.Read(out this.id);
             deserializer.Read(out this.vertices, Geometry.Vector3Msg.Deserialize, deserializer.ReadLength());
             deserializer.Read(out this.triangles, sizeof(int), deserializer.ReadLength());
@@ -42,6 +46,7 @@ namespace RosMessageTypes.ArVisualisation
 
         public override void SerializeTo(MessageSerializer serializer)
         {
+            serializer.Write(this.header);
             serializer.Write(this.id);
             serializer.WriteLength(this.vertices);
             serializer.Write(this.vertices);
@@ -52,6 +57,7 @@ namespace RosMessageTypes.ArVisualisation
         public override string ToString()
         {
             return "MeshDataMsg: " +
+            "\nheader: " + header.ToString() +
             "\nid: " + id.ToString() +
             "\nvertices: " + System.String.Join(", ", vertices.ToList()) +
             "\ntriangles: " + System.String.Join(", ", triangles.ToList());
