@@ -34,7 +34,7 @@ public class ThreeDMap : MonoBehaviour
     public void RegisterMesh(int id, GameObject go)
     {
         meshes[id] = go;
-        go.transform.SetParent(meshContainer, false);
+        go.transform.SetParent(meshContainer, true);
         MeshAdded?.Invoke(id);
     }
 
@@ -53,7 +53,7 @@ public class ThreeDMap : MonoBehaviour
     public void RegisterMarker(int id, GameObject go)
     {
         markers[id] = go;
-        go.transform.SetParent(markerContainer, false);
+        go.transform.SetParent(markerContainer, true);
         MarkerAdded?.Invoke(id);
     }
 

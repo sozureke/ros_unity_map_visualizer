@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshCreator
 {
     readonly Transform _parent;
     readonly Material _wallMaterial;
+    readonly Dictionary<int, MeshWall> _meshDict = new Dictionary<int, MeshWall>();
 
     public MeshCreator(Transform parent, Material wallMaterial)
     {
@@ -13,13 +15,39 @@ public class MeshCreator
 
     public void UpdateMesh(int id, Vector3[] verts, int[] tris)
     {
-        if (!ThreeDMap.Instance.TryGetMesh(id, out var go))
+        if (_meshDict.TryGetValue(id, out var wall))
         {
-            var wall = new MeshWall(id, verts, tris, _wallMaterial, _parent);
-            ThreeDMap.Instance.RegisterMesh(id, wall.GameObject);
-            return;
+            wall.UpdateMesh(verts, tris);
+        }
+        else
+        {
+            wall = new MeshWall(id, verts, tris, _wallMaterial, _parent);
+            _meshDict[id] = wall;
+
+            if (ThreeDMap.Instance != null)
+                ThreeDMap.Instance.RegisterMesh(id, wall.GameObject);
+        }
+    }
+
+    public void RemoveMesh(int id)
+    {
+        if (_meshDict.TryGetValue(id, out var wall))
+        {
+            Object.Destroy(wall.GameObject);
+            _meshDict.Remove(id);
+            ThreeDMap.Instance?.RemoveMesh(id);
+        }
+    }
+
+    public bool TryGetMesh(int id, out GameObject go)
+    {
+        if (_meshDict.TryGetValue(id, out var wall))
+        {
+            go = wall.GameObject;
+            return true;
         }
 
-        go.GetComponent<MeshWall>().UpdateMesh(verts, tris);
+        go = null;
+        return false;
     }
 }
