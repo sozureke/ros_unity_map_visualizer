@@ -47,6 +47,10 @@ public class MarkerDataSubscriber : MonoBehaviour
         {
             marker = Instantiate(markerPrefab);
             marker.name = $"Marker_{msg.id}";
+            int layer = LayerMask.NameToLayer("MapFor2D");
+            marker.layer = layer;
+            foreach (Transform c in marker.GetComponentsInChildren<Transform>())
+                c.gameObject.layer = layer;
             ThreeDMap.Instance.RegisterMarker(msg.id, marker);
         }
 
